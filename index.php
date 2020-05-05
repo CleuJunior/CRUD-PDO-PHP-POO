@@ -6,12 +6,40 @@
 </head>
 <body>
 
-<?php require_once 'Conn.php';
+<?php require_once './Conn.php';
 
-    $conn = new Conn();
-    $conn->getConn();
+$conn = new Conn();
+$conn->getConn();
 
-    var_dump($conn);
+$email = "cleonildojunior@hotmail.com";
+$usuario = "cleu";
+$senha = "12345";
+
+
+try {
+    $result_cadastra = "INSERT INTO usuarios (email, usuario, senha, created) VALUES (:email, :usuario, :senha, NOW())";
+    $cadastrar = $conn->getConn()->prepare($result_cadastra);
+    $cadastrar->bindParam(':email', $email, PDO::PARAM_STR);
+    $cadastrar->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+    $cadastrar->bindParam(':senha', $senha, PDO::PARAM_STR);
+
+    $cadastrar->execute();
+    if ($cadastrar->rowCount()):
+        echo "Cadastrado com Sucesso";
+    endif;
+
+}catch(Exception $ex){
+
+
+}
+
+
+//    $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+//    var_dump($dados);
+//
+//    if (!empty($dados['SendCaduser'])):
+//        unset($dados['SendCadUser']);
+//    endif;
 
 ?>
 <h1>Cadastrar Usuário</h1>
