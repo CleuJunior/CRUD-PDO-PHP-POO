@@ -29,12 +29,23 @@ class Contato
     }
 
 
+    // Busca o nome do contato no banco de dados, caso esteja cadastrado.
+
     private function existeEmail($email)
     {
+        $sql = "SELECT * FROM contatos WHERE email = :email";
+        $sql = $this->pdo->prepare($sql);
+        $sql->bindValue(':email', $email);
+        $sql->execute();
+
+        return $sql->rowCount() > 0 ? true : false;
+
 
     }
 
-    // Busca o nome do contato no banco de dados, caso esteja cadastrado.
+
+    // Busca todas as informações na tabela contatos e armazena em uma array.
+
     public function getNome($email)
     {
         $sql = "SELECT nome FROM contatos WHERE email = :email";
@@ -50,17 +61,49 @@ class Contato
         }
     }
 
+    // Metodo para modificar o nome do contato, caso o seu email seja válido.
 
-    // Busca todas as informações na tabela contatos e armazena em uma array.
     public function getAll()
     {
-        $sql = "SELEC * FROM contatos";
+        $sql = "SELECT * FROM contatos";
         $sql = $this->pdo->query($sql);
 
         if ($sql->rowCount() > 0) {
             return $sql->fetchAll();
         } else {
             return array();
+        }
+    }
+
+    // Metodo para deletar um contato.
+
+    public function editar($nome, $email)
+    {
+        if ($this->existeEmail($email)) {
+            $sql = "UPDATE contatos SET nome = :nome WHERE email = :email";
+            $sql = $this->pdo->prepare($sql);
+            $sql->bindValue(':nome', $nome);
+            $sql->bindValue(':email', $email);
+            $sql->execute();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function excluir($email)
+    {
+        if ($this->existeEmail($email)) {
+            $sql = "DELETE FROM contatos WHERE email = :email";
+            $sql = $this->pdo->prepare($sql);
+            $sql->bindValue(':email', $email);
+            $sql->execute();
+
+            return true;
+
+        } else {
+            return false;
         }
     }
 }
